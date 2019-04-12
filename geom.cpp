@@ -16,6 +16,7 @@ ld powa(ld a, ll b) {
 }
 
 TPoint::TPoint() {
+    x = 0, y = 0, z = 0;
 }
 
 TPoint::TPoint(ld _x, ld _y, ld _z) {
@@ -93,14 +94,21 @@ ostream& operator << (ostream& cout, const TPoint& point) {
 }
 
 TMolecul::TMolecul() {
+    position = TPoint();
+    mass = 0;
+    charge = 0;
+    velocity = TVector();
+    radius = 0;
+    name = "NoName";
 }
 
 TMolecul::TMolecul(const TPoint& _position,  ld _mass, ld _charge,
-        const TVector& _velocity, const string &_name) {
+        const TVector& _velocity, ld _radius, const string &_name) {
     position = _position;
     mass = _mass;
     charge = _charge;
 	velocity = _velocity;
+	radius = _radius;
     name = _name;
 }
 
@@ -112,7 +120,7 @@ TVector TMolecul::get_Force(const TMolecul &a) {
 }
 
 ostream& operator << (ostream& cout, const TMolecul& molecul) {
-    return (cout << "Molecul: " << molecul.name << " " << molecul.position);
+    return (cout << "Molecul: " << molecul.name << " " << molecul.position << " " << molecul.velocity);
 }
 
 TScene::TScene() {
@@ -132,16 +140,18 @@ void TScene::add_Molecul(const TMolecul &molecul) {
 }
 
 void TScene::move() {
-    vector<TVector> cur_force(moleculs.size());
+    vector<TVector> cur_force;
+    cur_force.assign(moleculs.size(), TVector());
     for (int i = 0; i < (int)moleculs.size(); i++) {
         for (int j = 0; j < (int) moleculs.size(); j++) {
             if (i == j) continue;
             cur_force[i] += moleculs[i].get_Force(moleculs[j]);
         }
-        moleculs[i].velocity += cur_force[i] / moleculs[i].mass;
     }
     for (int i = 0; i < (int)moleculs.size(); i++) {
         moleculs[i].position += moleculs[i].velocity * dt;
+        moleculs[i].position += cur_force[i] / moleculs[i].mass * dt * dt / 2;
+        moleculs[i].velocity += cur_force[i] / moleculs[i].mass * dt;
     }
 }
 

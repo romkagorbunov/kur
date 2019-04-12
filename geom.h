@@ -5,6 +5,13 @@
 #include <cmath>
 #include <iostream>
 #include <cstdio>
+#define GL_GLEXT_PROTOTYPES
+#ifdef __APPLE__
+#include <glut.h>
+#else
+#include <GL/glut.h>
+#endif
+
 
 using namespace std;
 
@@ -41,9 +48,10 @@ struct TMolecul {
 	ld mass;
 	ld charge;
 	TVector velocity;
+	ld radius;
 	string name;
 	TMolecul();
-	TMolecul(const TPoint& _position,  ld _mass, ld _charge, const TVector& _velocity, const string& _name);
+	TMolecul(const TPoint& _position,  ld _mass, ld _charge, const TVector& _velocity, ld _radius, const string& _name);
     TVector get_Force(const TMolecul &b);
     friend ostream& operator<<(ostream& cout, const TMolecul& err);
 };
